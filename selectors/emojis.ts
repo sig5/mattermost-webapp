@@ -34,15 +34,15 @@ export const getRecentEmojis = createSelector(
         const recentEmojis: string[] = LocalStorageStore.getRecentEmojis(currentUserId) ||
             JSON.parse(getItemFromStorage(storage.storage, Constants.RECENT_EMOJI_KEY, null)); // Prior to release v5.9, recent emojis were saved as object in localforage.
 
-        if (!recentEmojis) {
-            return [];
+        if (Array.isArray(recentEmojis)) {
+            return recentEmojis;
         }
 
-        return recentEmojis;
+        return [];
     },
 );
 
-export function getUserSkinTone(state: GlobalState) {
+export function getUserSkinTone(state: GlobalState): string {
     return get(state, Preferences.CATEGORY_EMOJI, Preferences.EMOJI_SKINTONE, 'default');
 }
 
