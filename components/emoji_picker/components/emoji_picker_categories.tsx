@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React, {KeyboardEvent, memo, useMemo} from 'react';
+import React, {KeyboardEvent, memo} from 'react';
 
 import {EmojiCategory} from 'mattermost-redux/types/emojis';
 
@@ -61,28 +61,7 @@ function EmojiPickerCategories({
         focusOnSearchInput();
     };
 
-    const categoryNames = Object.keys(categories) as EmojiCategory[];
-    const activeCategory = isFiltering ? categoryNames[0] : active;
-
-    const categoryNamesDependency = Object.values(categories).map((category) => `${category.id}-${category?.emojiIds?.length}`).join(',');
-
-    const emojiPickerCategories = useMemo(() => categoryNames.map((categoryName, index) => {
-        const category = categories[categoryName];
-        const categoryRowIndex = calculateCategoryRowIndex(categories, categoryName);
-        const categoryIndex = index;
-
-        return (
-            <EmojiPickerCategory
-                key={categoryIndex + category.name}
-                category={category}
-                categoryIndex={categoryIndex}
-                categoryRowIndex={categoryRowIndex}
-                onClick={onClick}
-                selected={activeCategory === category.name}
-                enable={!isFiltering}
-            />
-        );
-    }), [categoryNamesDependency, isFiltering, active]);
+    const activeCategory = isFiltering ? Object.keys(categories)[0] : active;
 
     return (
         <div
@@ -91,7 +70,23 @@ function EmojiPickerCategories({
             onKeyDown={handleKeyDown}
             role='application'
         >
-            {emojiPickerCategories}
+            {Object.keys(categories).map((categoryName, index) => {
+                const category = categories[categoryName as EmojiCategory];
+
+                return (
+                    <EmojiPickerCategory
+                        key={`${category.id}-${category.name}`}
+                        category={category}
+                        categoryIndex={index}
+                        categoryRowIndex={calculateCategoryRowIndex(categories, categoryName as EmojiCategory)}
+                        onClick={onClick}
+                        selected={activeCategory === category.name}
+                        enable={!isFiltering}
+                    />
+                );
+            },
+
+            )}
         </div>
     );
 }

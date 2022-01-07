@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React, {memo, useCallback, useMemo} from 'react';
+import React, {memo, useCallback} from 'react';
 import {useIntl} from 'react-intl';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
@@ -12,7 +12,7 @@ import {Emoji, EmojiCategory} from 'mattermost-redux/types/emojis';
 import {EmojiCursor} from 'components/emoji_picker/types';
 
 import imgTrans from 'images/img_trans.gif';
-import {EMOJI_LAZY_LOAD_SCROLL_DEBOUNCE} from 'components/emoji_picker/constants';
+import {EMOJI_LAZY_LOAD_SCROLL_DEBOUNCE, CUSTOM} from 'components/emoji_picker/constants';
 
 interface Props {
     emoji: Emoji;
@@ -42,21 +42,38 @@ function EmojiPickerItem({emoji, rowIndex, categoryIndex, categoryName, emojiInd
         onClick(emoji);
     };
 
-    const emojiImage = useMemo(() => {
-        if (emoji.category && emoji.category !== 'custom') {
-            const emojiName = emoji.short_name ? emoji.short_name : emoji.name;
+    const itemClassName = classNames('emoji-picker__item', {
+        selected: isSelected,
+    });
 
-            let spriteClassName = 'emojisprite';
-            spriteClassName += ' emoji-category-' + emoji.category;
-            spriteClassName += ' emoji-' + emoji.image;
+    if (emoji.category === CUSTOM) {
+        return (
+            <div className={itemClassName}>
+                <div data-testid='emojiItem'>
+                    <img
+                        alt={'custom emoji image'}
+                        onMouseOver={debouncedMouseOver}
+                        src={getEmojiImageUrl(emoji)}
+                        className={'emoji-category--custom'}
+                        onClick={handleClick}
+                        loading='lazy'
+                    />
+                </div>
+            </div>
+        );
+    }
 
-            return (
+    const emojiName = emoji.short_name ? emoji.short_name : emoji.name;
+
+    return (
+        <div className={itemClassName}>
+            <div data-testid='emojiItem'>{
                 <img
                     alt={'emoji image'}
                     data-testid={emoji.short_names}
                     onMouseOver={debouncedMouseOver}
                     src={imgTrans}
-                    className={spriteClassName}
+                    className={`emojisprite emoji-category-${emoji.category} emoji-${emoji.image}`}
                     onClick={handleClick}
                     id={`emoji-${emoji.image}`}
                     aria-label={formatMessage(
@@ -65,33 +82,12 @@ function EmojiPickerItem({emoji, rowIndex, categoryIndex, categoryName, emojiInd
                             defaultMessage: '{emojiName} emoji',
                         },
                         {
-                            emojiName: emojiName.replace(/_/g, ' '),
+                            emojiName: (emojiName).replace(/_/g, ' '),
                         },
                     )}
                     role='button'
                 />
-            );
-        }
-
-        return (
-            <img
-                alt={'custom emoji image'}
-                onMouseOver={debouncedMouseOver}
-                src={getEmojiImageUrl(emoji)}
-                className={'emoji-category--custom'}
-                onClick={handleClick}
-                loading='lazy'
-            />
-        );
-    }, [emojiIndex, categoryIndex]);
-
-    const itemClassName = classNames('emoji-picker__item', {
-        selected: isSelected,
-    });
-
-    return (
-        <div className={itemClassName}>
-            <div data-testid='emojiItem'>{emojiImage}</div>
+            }</div>
         </div>
     );
 }

@@ -49,7 +49,7 @@ const EmojiPicker = ({
     },
 }: Props) => {
     const getInitialActiveCategory = () => (recentEmojis.length ? RECENT : SMILEY_EMOTION);
-    const [activeCategory, setActiveCategory] = useState<EmojiCategory>('recent');
+    const [activeCategory, setActiveCategory] = useState<EmojiCategory>(getInitialActiveCategory);
 
     const [cursor, setCursor] = useState<EmojiCursor>({
         rowIndex: -1,
@@ -69,6 +69,8 @@ const EmojiPicker = ({
     const searchInputRef = useRef<HTMLInputElement>(null);
 
     const resultsListRef = useRef<FixedSizeList<CategoryOrEmojiRow[]>>(null);
+
+    // const resultsListRef = useRef<InfiniteLoader & {_listRef: FixedSizeList<CategoryOrEmojiRow[]>}>(null);
 
     const categoryNames = Object.keys(categories) as EmojiCategory[];
 
@@ -94,8 +96,8 @@ const EmojiPicker = ({
     }, [emojiMap, userSkinTone, recentEmojis]);
 
     useEffect(() => {
-        const updatedcategoryOrEmojisRows = createCategoryAndEmojiRows(allEmojis, categories, filter, userSkinTone);
-        setCategoryOrEmojisRows(updatedcategoryOrEmojisRows);
+        const updatedCategoryOrEmojisRows = createCategoryAndEmojiRows(allEmojis, categories, filter, userSkinTone);
+        setCategoryOrEmojisRows(updatedCategoryOrEmojisRows);
     }, [filter, userSkinTone, Object.keys(allEmojis).join(','), categoryNames.join(',')]);
 
     // Hack for getting focus on search input when tab changes to emoji from gifs
@@ -114,7 +116,9 @@ const EmojiPicker = ({
 
     // scroll as little as possible on cursor navigation
     useEffect(() => {
-        resultsListRef?.current?.scrollToItem(cursor.rowIndex, 'auto');
+        if (cursor.emoji) {
+            resultsListRef?.current?.scrollToItem(cursor.rowIndex, 'auto');
+        }
     }, [cursor.rowIndex]);
 
     const focusOnSearchInput = useCallback(() => {
@@ -173,7 +177,7 @@ const EmojiPicker = ({
             return null;
         }
 
-        const emojiIndexInsideRow = (emojiIndex % EMOJI_PER_ROW )+ 1;
+        const emojiIndexInsideRow = (emojiIndex % EMOJI_PER_ROW) + 1;
 
         const emoji = emojiRow.items?.[emojiIndexInsideRow] ?? null;
         if (!emoji) {

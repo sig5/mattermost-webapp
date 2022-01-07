@@ -7,14 +7,11 @@ import React, {
     KeyboardEvent,
     memo,
 } from 'react';
-import {FormattedMessage} from 'react-intl';
+import {useIntl} from 'react-intl';
 
 import {NavigateDirection} from 'components/emoji_picker/types';
 
-import {t} from 'utils/i18n';
 import {EMOJI_PER_ROW, NAVIGATE_TO_NEXT_EMOJI, NAVIGATE_TO_NEXT_EMOJI_ROW, NAVIGATE_TO_PREVIOUS_EMOJI, NAVIGATE_TO_PREVIOUS_EMOJI_ROW} from 'components/emoji_picker/constants';
-
-import LocalizedInput from 'components/localized_input/localized_input';
 
 interface Props {
     value: string;
@@ -30,6 +27,8 @@ interface Props {
 }
 
 const EmojiPickerSearch = forwardRef<HTMLInputElement, Props>(({value, customEmojisEnabled, cursorCategoryIndex, cursorEmojiIndex, onChange, resetCursorPosition, onKeyDown, focus, onEnter, searchCustomEmojis}: Props, ref) => {
+    const {formatMessage} = useIntl();
+
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         event.preventDefault();
 
@@ -110,29 +109,19 @@ const EmojiPickerSearch = forwardRef<HTMLInputElement, Props>(({value, customEmo
     return (
         <div className='emoji-picker__text-container'>
             <span className='icon-magnify icon emoji-picker__search-icon'/>
-            <FormattedMessage
-                id='emoji_picker.search_emoji'
-                defaultMessage='Search for an emoji'
-            >
-                {(ariaLabel) => (
-                    <LocalizedInput
-                        id='emojiPickerSearch'
-                        aria-label={`${ariaLabel}`}
-                        ref={ref}
-                        className='emoji-picker__search'
-                        data-testid='emojiInputSearch'
-                        type='text'
-                        onChange={handleChange}
-                        onKeyDown={handleKeyDown}
-                        autoComplete='off'
-                        placeholder={{
-                            id: t('emoji_picker.search'),
-                            defaultMessage: 'Search Emoji',
-                        }}
-                        value={value}
-                    />
-                )}
-            </FormattedMessage>
+            <input
+                ref={ref}
+                id='emojiPickerSearch'
+                aria-label={formatMessage({id: 'emoji_picker.search_emoji', defaultMessage: 'Search for an emoji'})}
+                className='emoji-picker__search'
+                data-testid='emojiInputSearch'
+                type='text'
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                autoComplete='off'
+                placeholder={formatMessage({id: 'emoji_picker.search', defaultMessage: 'Search Emoji'})}
+                value={value}
+            />
         </div>
     );
 },

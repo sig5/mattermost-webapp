@@ -1,7 +1,7 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React, {memo, useMemo} from 'react';
+import React, {memo} from 'react';
 import {ListChildComponentProps, areEqual} from 'react-window';
 
 import {Emoji} from 'mattermost-redux/types/emojis';
@@ -21,36 +21,6 @@ interface Props extends ListChildComponentProps<CategoryOrEmojiRow[]> {
 }
 
 function EmojiPickerCategoryOrEmojiRow({index, style, data, cursorCategoryIndex, cursorEmojiIndex, onEmojiClick, onEmojiMouseOver}: Props) {
-    const emojisRow = data[index].items as CategoryOrEmojiRow<typeof EMOJIS_ROW>['items'];
-    const emojisRowIds = emojisRow.map((emoji) => emoji.categoryIndex + emoji.categoryName + emoji.emojiId + emoji.emojiIndex).join('--');
-    const rowIndex = data[index].index;
-
-    const emojisInARow = useMemo(() => {
-        if (data[index].type !== EMOJIS_ROW) {
-            return null;
-        }
-
-        return emojisRow.map((emojiColumn) => {
-            const emoji = emojiColumn.item;
-            const isSelected = emojiColumn.categoryIndex === cursorCategoryIndex &&
-                emojiColumn.emojiIndex === cursorEmojiIndex;
-
-            return (
-                <EmojiPickerItem
-                    key={`${emojiColumn.categoryName}-${emojiColumn.emojiId}`}
-                    emoji={emoji}
-                    rowIndex={rowIndex}
-                    categoryIndex={emojiColumn.categoryIndex}
-                    categoryName={emojiColumn.categoryName}
-                    emojiIndex={emojiColumn.emojiIndex}
-                    isSelected={isSelected}
-                    onClick={onEmojiClick}
-                    onMouseOver={onEmojiMouseOver}
-                />
-            );
-        });
-    }, [emojisRowIds]);
-
     if (data[index].type === CATEGORY_HEADER_ROW) {
         return (
             <EmojiPickerCategorySection
@@ -60,14 +30,38 @@ function EmojiPickerCategoryOrEmojiRow({index, style, data, cursorCategoryIndex,
         );
     }
 
-    return (
-        <div
-            style={style}
-            className='emoji-picker__row'
-        >
-            {emojisInARow}
-        </div>
-    );
+    const emojisRow = data[index].items as CategoryOrEmojiRow<typeof EMOJIS_ROW>['items'];
+    const rowIndex = data[index].index;
+
+    if (data[index].type === EMOJIS_ROW) {
+        return (
+            <div
+                style={style}
+                className='emoji-picker__row'
+            >
+                {emojisRow.map((emojiColumn) => {
+                    const emoji = emojiColumn.item;
+                    const isSelected = emojiColumn.categoryIndex === cursorCategoryIndex && emojiColumn.emojiIndex === cursorEmojiIndex;
+
+                    return (
+                        <EmojiPickerItem
+                            key={`${emojiColumn.categoryName}-${emojiColumn.emojiId}`}
+                            emoji={emoji}
+                            rowIndex={rowIndex}
+                            categoryIndex={emojiColumn.categoryIndex}
+                            categoryName={emojiColumn.categoryName}
+                            emojiIndex={emojiColumn.emojiIndex}
+                            isSelected={isSelected}
+                            onClick={onEmojiClick}
+                            onMouseOver={onEmojiMouseOver}
+                        />
+                    );
+                })}
+            </div>
+        );
+    }
+
+    return null;
 }
 
 export default memo(EmojiPickerCategoryOrEmojiRow, areEqual);
