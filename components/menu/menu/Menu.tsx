@@ -149,6 +149,30 @@ const Menu = (props: MenuProps): JSX.Element => {
                         <i className='icon-sort-alphabetical-ascending'/>
                     }
                 />,
+                    <MenuItem
+                    label='Join Mattermost'
+                    leadingElement={
+                        <i className='icon-sort-alphabetical-ascending'/>
+                    }
+                />,
+                <MenuItem
+                label='Join Mattermost'
+                leadingElement={
+                    <i className='icon-sort-alphabetical-ascending'/>
+                }
+            />,
+            <MenuItem
+            label='Join Mattermost'
+            leadingElement={
+                <i className='icon-sort-alphabetical-ascending'/>
+            }
+        />,
+        <MenuItem
+        label='Join Mattermost'
+        leadingElement={
+            <i className='icon-sort-alphabetical-ascending'/>
+        }
+        />,
                 <MenuItem
                     disabled
                     label='Category Mattermost'
@@ -156,6 +180,27 @@ const Menu = (props: MenuProps): JSX.Element => {
                         <i className='icon-account-multiple-outline'/>
                     }
                 />,
+                <MenuItem
+                disabled
+                label='Category Mattermost'
+                leadingElement={
+                    <i className='icon-account-multiple-outline'/>
+                }
+            />,
+            <MenuItem
+            disabled
+            label='Category Mattermost'
+            leadingElement={
+                <i className='icon-account-multiple-outline'/>
+            }
+        />,
+        <MenuItem
+        disabled
+        label='Category Mattermost'
+        leadingElement={
+            <i className='icon-account-multiple-outline'/>
+        }
+    />,
             ],
         },
     ];

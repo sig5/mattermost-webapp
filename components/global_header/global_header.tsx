@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import CenterControls from './center_controls/center_controls';
 import LeftControls from './left_controls/left_controls';
 import RightControls from './right_controls/right_controls';
+import Menu from '../menu/menu/Menu';
 
 import {useCurrentProductId, useIsLoggedIn, useProducts} from './hooks';
 
@@ -24,13 +25,6 @@ const GlobalHeaderContainer = styled.header`
     padding: 0 12px;
     z-index: 100;
 
-    > * + * {
-        margin-left: 12px;
-    }
-
-    @media screen and (max-width: 768px) {
-        display: none;
-    }
 `;
 
 const GlobalHeader = (): JSX.Element | null => {
@@ -45,6 +39,7 @@ const GlobalHeader = (): JSX.Element | null => {
     return (
         <GlobalHeaderContainer id='global-header'>
             <LeftControls/>
+            <Menu/>
             <CenterControls productId={currentProductID}/>
             <RightControls productId={currentProductID}/>
         </GlobalHeaderContainer>
