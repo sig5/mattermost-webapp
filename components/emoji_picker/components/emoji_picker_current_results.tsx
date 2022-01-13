@@ -55,12 +55,10 @@ const EmojiPickerCurrentResults = forwardRef<FixedSizeList<CategoryOrEmojiRow[]>
         setActiveCategory(closestCategory);
     };
 
-    const categoryOrEmojiRowsDependency = categoryOrEmojisRows.map((categoryOrEmojiRow) => `${categoryOrEmojiRow.index}-${categoryOrEmojiRow.type}-${categoryOrEmojiRow.items.length}`).join('--');
-
     const debouncedScroll = useCallback(debounce(({scrollOffset}: ListOnScrollProps) => {
         handleScroll(scrollOffset, activeCategory, isFiltering, categoryOrEmojisRows);
     }, 150, {leading: true, trailing: true},
-    ), [activeCategory, isFiltering, categoryOrEmojiRowsDependency]);
+    ), [activeCategory, isFiltering, categoryOrEmojisRows]);
 
     return (
         <div
